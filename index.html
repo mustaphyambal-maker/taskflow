@@ -1,0 +1,181 @@
+<!-- ============================================================
+     TASKFLOW — MINIMAL TASK MANAGER
+     File: index.html
+     A fast, offline-first task manager that works on any device.
+     Plain HTML, CSS, JavaScript. No frameworks.
+     ============================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#c2410c" />
+  <meta
+    name="description"
+    content="TaskFlow — a fast, offline-first task manager. Add, edit, and complete tasks. No account needed, works on any device."
+  />
+  <title>TaskFlow — Minimal Task Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       APP SHELL
+       Centered card. Max width ~560px.
+       ============================================================ -->
+  <main class="app" role="main">
+
+    <!-- ============================================================
+         HEADER
+         App name, tagline, dark-mode toggle.
+         ============================================================ -->
+    <header class="app-header">
+      <div class="app-title-block">
+        <h1 class="app-title">
+          Task<span class="accent">Flow</span>
+        </h1>
+        <p class="app-tagline">Offline-first task manager</p>
+      </div>
+
+      <button
+        class="theme-toggle"
+        type="button"
+        id="themeToggle"
+        aria-label="Toggle dark mode"
+        aria-pressed="false"
+        title="Toggle dark mode"
+      >
+        <!-- Moon icon (shown in light mode) -->
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+        <!-- Sun icon (shown in dark mode) -->
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41
+                   M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- ============================================================
+         ADD TASK FORM
+         Text input + Add button. Enter submits.
+         ============================================================ -->
+    <form class="add-form" id="addForm" autocomplete="off">
+      <label for="taskInput" class="sr-only">Add a new task</label>
+      <input
+        type="text"
+        id="taskInput"
+        class="task-input"
+        name="task"
+        placeholder="What needs to be done?"
+        maxlength="200"
+        aria-label="New task title"
+      />
+      <button
+        type="submit"
+        id="addBtn"
+        class="add-btn"
+        aria-label="Add task"
+        disabled
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        <span class="add-btn-text">Add</span>
+      </button>
+    </form>
+
+    <!-- ============================================================
+         FILTER TABS
+         All / Active / Completed
+         ============================================================ -->
+    <nav class="filters" aria-label="Filter tasks">
+      <div class="filter-tabs" role="tablist">
+        <button
+          class="filter-tab is-active"
+          type="button"
+          role="tab"
+          data-filter="all"
+          aria-selected="true"
+        >
+          All
+        </button>
+        <button
+          class="filter-tab"
+          type="button"
+          role="tab"
+          data-filter="active"
+          aria-selected="false"
+        >
+          Active
+        </button>
+        <button
+          class="filter-tab"
+          type="button"
+          role="tab"
+          data-filter="completed"
+          aria-selected="false"
+        >
+          Completed
+        </button>
+      </div>
+    </nav>
+
+    <!-- ============================================================
+         TASK LIST
+         Filled dynamically by script.js
+         ============================================================ -->
+    <section class="task-section" aria-label="Tasks">
+      <ul class="task-list" id="taskList" role="list"></ul>
+
+      <!-- Empty state — shown when no tasks match the filter -->
+      <div class="empty-state" id="emptyState" hidden>
+        <!-- Icon switches depending on filter, but we start with the default -->
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+             stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+        </svg>
+        <p class="empty-title" id="emptyTitle">No tasks yet</p>
+        <p class="empty-sub" id="emptySub">Add your first task above to get started.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+         Items-left count + Clear completed button
+         ============================================================ -->
+    <footer class="app-footer" id="appFooter" hidden>
+      <span class="items-left" id="itemsLeft" aria-live="polite">
+        <span id="itemsLeftCount">0</span>
+        <span id="itemsLeftLabel">items left</span>
+      </span>
+
+      <button
+        class="clear-btn"
+        type="button"
+        id="clearCompleted"
+        aria-label="Clear completed tasks"
+      >
+        Clear completed
+      </button>
+    </footer>
+
+  </main>
+
+  <!-- ============================================================
+       SCRIPT (loaded last so the DOM exists)
+       ============================================================ -->
+  <script src="script.js"></script>
+</body>
+</html>

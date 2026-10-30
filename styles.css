@@ -759,3 +759,9 @@ body.dark .install-banner {
 .install-confirm:hover {
   background: var(--brand-dark);
 }
+
+/* Make the hidden attribute actually hide the banner, even with display:flex */
+.install-banner[hidden] {
+  display: none !important;
+}
+

@@ -504,47 +504,44 @@
 
   if (!banner || !confirmBtn || !cancelBtn) return;
 
-  // ---- 1. If the app is already installed, never show the banner ----
+  // 1. If already installed, hide forever
   if (
     window.matchMedia("(display-mode: standalone)").matches ||
     window.navigator.standalone === true
   ) {
     banner.hidden = true;
     banner.style.display = "none";
-    return; // exit early — no install prompt logic needed
+    return;
   }
 
-  // ---- 2. If the user dismissed the banner before, don't show it ----
+  // 2. If user clicked "Not now" before, don't show it
   let dismissed = "false";
   try {
     dismissed = localStorage.getItem("taskflow.installDismissed") || "false";
   } catch (err) {}
+  
   if (dismissed === "true") {
     banner.hidden = true;
     banner.style.display = "none";
   }
 
-  // ---- 3. Listen for Chrome's install event ----
+  // 3. Listen for Chrome's native install event
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
-
-    // Only show the banner if not dismissed
     if (dismissed !== "true") {
       banner.hidden = false;
       banner.style.display = "flex";
     }
   });
 
-  // ---- 4. Install button ----
+  // 4. When user clicks "Install"
   confirmBtn.addEventListener("click", async () => {
     banner.hidden = true;
     banner.style.display = "none";
 
     if (!deferredPrompt) {
-      alert(
-        "To install: tap the three dots (⋮) at the top of your browser, then choose 'Install app' or 'Add to Home screen'."
-      );
+      alert("To install, tap the three dots (⋮) and choose 'Install app' or 'Add to Home screen'.");
       return;
     }
 
@@ -552,15 +549,13 @@
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       console.log("Install choice:", choice.outcome);
+      deferredPrompt = null;
     } catch (err) {
-      alert(
-        "Install not available right now. Use the browser menu (⋮) → 'Add to Home screen'."
-      );
+      alert("Install not available right now. Use the browser menu (⋮) → 'Add to Home screen'.");
     }
-    deferredPrompt = null;
   });
 
-  // ---- 5. "Not now" button ----
+  // 5. When user clicks "Not now"
   cancelBtn.addEventListener("click", () => {
     banner.hidden = true;
     banner.style.display = "none";
@@ -569,7 +564,6 @@
     } catch (err) {}
   });
 
-  // ---- 6. If the app gets installed, hide the banner forever ----
   window.addEventListener("appinstalled", () => {
     banner.hidden = true;
     banner.style.display = "none";

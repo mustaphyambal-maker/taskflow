@@ -497,40 +497,63 @@
      9. BOOT
      ---------------------------------------------------------- */
     function initInstallPrompt() {
-    const banner = document.getElementById("installBanner");
-    const confirmBtn = document.getElementById("installConfirm");
-    const cancelBtn = document.getElementById("installCancel");
-    let deferredPrompt;
+  const banner = document.getElementById("installBanner");
+  const confirmBtn = document.getElementById("installConfirm");
+  const cancelBtn = document.getElementById("installCancel");
+  let deferredPrompt = null;
 
-    if (!banner) return;
+  if (!banner || !confirmBtn || !cancelBtn) return;
 
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (localStorage.getItem("taskflow.installDismissed") !== "true") {
-        banner.hidden = false;
-      }
-    });
+  // Listen for the browser's install event
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
 
-    confirmBtn.addEventListener("click", async () => {
-      banner.hidden = true;
-      if (!deferredPrompt) return;
+    // Only show the banner if the user hasn't dismissed it before
+    let dismissed = "false";
+    try {
+      dismissed = localStorage.getItem("taskflow.installDismissed") || "false";
+    } catch (err) {}
+    if (dismissed !== "true") {
+      banner.hidden = false;
+    }
+  });
+
+  // "Install" button
+  confirmBtn.addEventListener("click", async () => {
+    banner.hidden = true;
+
+    if (!deferredPrompt) {
+      // No install prompt available — tell the user
+      alert("To install, tap the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'.");
+      return;
+    }
+
+    try {
       deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log("User response: " + outcome);
-      deferredPrompt = null;
-    });
+      const choice = await deferredPrompt.userChoice;
+      console.log("Install choice:", choice.outcome);
+    } catch (err) {
+      console.warn("Install prompt failed:", err);
+      alert("Install not available right now. Try the browser menu (⋮) → 'Add to Home screen'.");
+    }
+    deferredPrompt = null;
+  });
 
-    cancelBtn.addEventListener("click", () => {
-      banner.hidden = true;
+  // "Not now" button
+  cancelBtn.addEventListener("click", () => {
+    banner.hidden = true;
+    try {
       localStorage.setItem("taskflow.installDismissed", "true");
-    });
+    } catch (err) {}
+  });
 
-    window.addEventListener("appinstalled", () => {
-      banner.hidden = true;
-      deferredPrompt = null;
-    });
-  }
+  // Hide banner after successful install
+  window.addEventListener("appinstalled", () => {
+    banner.hidden = true;
+    deferredPrompt = null;
+  });
+}
 
   function init() {
     initTheme();

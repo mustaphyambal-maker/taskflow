@@ -15,6 +15,9 @@
     content="TaskFlow — a fast, offline-first task manager. Add, edit, and complete tasks. No account needed, works on any device."
   />
   <title>TaskFlow — Minimal Task Manager</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#c2410c" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -173,9 +176,32 @@
 
   </main>
 
+  <!-- Install App Banner -->
+<div id="installBanner" class="install-banner" hidden>
+  <div class="install-content">
+    <img src="icon-192.png" alt="TaskFlow Icon" class="install-icon">
+    <div class="install-text">
+      <strong>Install TaskFlow</strong>
+      <span>Works offline. Fast & lightweight.</span>
+    </div>
+  </div>
+  <div class="install-actions">
+    <button id="installCancel" class="install-cancel">Not now</button>
+    <button id="installConfirm" class="install-confirm">Install</button>
+  </div>
+</div>
+
   <!-- ============================================================
        SCRIPT (loaded last so the DOM exists)
        ============================================================ -->
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+  </script>
+
   <script src="script.js"></script>
 </body>
 </html>

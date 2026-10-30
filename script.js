@@ -496,12 +496,53 @@
   /* ----------------------------------------------------------
      9. BOOT
      ---------------------------------------------------------- */
-  function init() {
-    initTheme();
-    initForm();
-    initFilters();
-    initTaskList();
-    initFooter();
+  function initInstallPrompt() {
+  const banner = document.getElementById("installBanner");
+  const confirmBtn = document.getElementById("installConfirm");
+  const cancelBtn = document.getElementById("installCancel");
+  let deferredPrompt;
+
+  if (!banner) return; // safety check
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (localStorage.getItem("taskflow.installDismissed") !== "true") {
+      banner.hidden = false;
+    }
+  });
+
+  confirmBtn.addEventListener("click", async () => {
+    banner.hidden = true;
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response: ${outcome}`);
+    deferredPrompt = null;
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    banner.hidden = true;
+    localStorage.setItem("taskflow.installDismissed", "true");
+  });
+
+  window.addEventListener("appinstalled", () => {
+    banner.hidden = true;
+    deferredPrompt = null;
+  });
+}
+
+function init() {
+  initTheme();
+  initForm();
+  initFilters();
+  initTaskList();
+  initFooter();
+  initInstallPrompt(); // <-- Add this line
+
+  tasks = loadTasks();
+  render();
+}
 
     // Load persisted tasks, then render everything
     tasks = loadTasks();

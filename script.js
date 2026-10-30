@@ -496,55 +496,50 @@
   /* ----------------------------------------------------------
      9. BOOT
      ---------------------------------------------------------- */
-  function initInstallPrompt() {
-  const banner = document.getElementById("installBanner");
-  const confirmBtn = document.getElementById("installConfirm");
-  const cancelBtn = document.getElementById("installCancel");
-  let deferredPrompt;
+    function initInstallPrompt() {
+    const banner = document.getElementById("installBanner");
+    const confirmBtn = document.getElementById("installConfirm");
+    const cancelBtn = document.getElementById("installCancel");
+    let deferredPrompt;
 
-  if (!banner) return; // safety check
+    if (!banner) return;
 
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (localStorage.getItem("taskflow.installDismissed") !== "true") {
-      banner.hidden = false;
-    }
-  });
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (localStorage.getItem("taskflow.installDismissed") !== "true") {
+        banner.hidden = false;
+      }
+    });
 
-  confirmBtn.addEventListener("click", async () => {
-    banner.hidden = true;
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response: ${outcome}`);
-    deferredPrompt = null;
-  });
+    confirmBtn.addEventListener("click", async () => {
+      banner.hidden = true;
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log("User response: " + outcome);
+      deferredPrompt = null;
+    });
 
-  cancelBtn.addEventListener("click", () => {
-    banner.hidden = true;
-    localStorage.setItem("taskflow.installDismissed", "true");
-  });
+    cancelBtn.addEventListener("click", () => {
+      banner.hidden = true;
+      localStorage.setItem("taskflow.installDismissed", "true");
+    });
 
-  window.addEventListener("appinstalled", () => {
-    banner.hidden = true;
-    deferredPrompt = null;
-  });
-}
+    window.addEventListener("appinstalled", () => {
+      banner.hidden = true;
+      deferredPrompt = null;
+    });
+  }
 
-function init() {
-  initTheme();
-  initForm();
-  initFilters();
-  initTaskList();
-  initFooter();
-  initInstallPrompt(); // <-- Add this line
+  function init() {
+    initTheme();
+    initForm();
+    initFilters();
+    initTaskList();
+    initFooter();
+    initInstallPrompt();
 
-  tasks = loadTasks();
-  render();
-}
-
-    // Load persisted tasks, then render everything
     tasks = loadTasks();
     render();
   }

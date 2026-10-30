@@ -502,30 +502,26 @@
   const cancelBtn = document.getElementById("installCancel");
   let deferredPrompt = null;
 
-  if (!banner || !confirmBtn || !cancelBtn) return;
+  if (!banner || !confirmBtn || !cancelBtn) {
+    console.log("Install banner elements not found.");
+    return;
+  }
 
-  // Listen for the browser's install event
+  console.log("Install prompt system initialized.");
+
   window.addEventListener("beforeinstallprompt", (e) => {
+    console.log("beforeinstallprompt fired!");
     e.preventDefault();
     deferredPrompt = e;
-
-    // Only show the banner if the user hasn't dismissed it before
-    let dismissed = "false";
-    try {
-      dismissed = localStorage.getItem("taskflow.installDismissed") || "false";
-    } catch (err) {}
-    if (dismissed !== "true") {
-      banner.hidden = false;
-    }
+    banner.hidden = false;
   });
 
-  // "Install" button
   confirmBtn.addEventListener("click", async () => {
+    console.log("Install button clicked. deferredPrompt is:", deferredPrompt);
     banner.hidden = true;
 
     if (!deferredPrompt) {
-      // No install prompt available — tell the user
-      alert("To install, tap the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'.");
+      alert("Install this app: Tap the browser menu (⋮) and choose 'Install app' or 'Add to Home screen'.");
       return;
     }
 
@@ -534,22 +530,23 @@
       const choice = await deferredPrompt.userChoice;
       console.log("Install choice:", choice.outcome);
     } catch (err) {
-      console.warn("Install prompt failed:", err);
-      alert("Install not available right now. Try the browser menu (⋮) → 'Add to Home screen'.");
+      alert("Install not available. Use the browser menu (⋮) to add this to your home screen.");
     }
     deferredPrompt = null;
   });
 
-  // "Not now" button
   cancelBtn.addEventListener("click", () => {
+    console.log("Not now button clicked.");
     banner.hidden = true;
     try {
       localStorage.setItem("taskflow.installDismissed", "true");
-    } catch (err) {}
+    } catch (err) {
+      console.log("Could not save dismissal to localStorage.");
+    }
   });
 
-  // Hide banner after successful install
   window.addEventListener("appinstalled", () => {
+    console.log("App installed!");
     banner.hidden = true;
     deferredPrompt = null;
   });

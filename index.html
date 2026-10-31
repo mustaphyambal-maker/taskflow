@@ -81,13 +81,31 @@
     maxlength="200"
     aria-label="New task title"
   />
+  
+  <!-- Hidden real date input -->
   <input
-  type="date"
-  id="taskDate"
-  class="task-date-input"
-  aria-label="Due date (optional)"
-  title="Set a due date (optional)"
-/>
+    type="date"
+    id="taskDate"
+    class="task-date-hidden"
+    aria-label="Due date (optional)"
+  />
+  
+  <!-- Visible calendar button that triggers the hidden input -->
+  <button
+    type="button"
+    id="dateBtn"
+    class="date-btn"
+    aria-label="Pick a due date"
+    title="Set a due date"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  </button>
+  
   <button
     type="submit"
     id="addBtn"

@@ -497,10 +497,34 @@ function formatDate(d) {
 
   function initForm() {
   const dateInput = document.getElementById("taskDate");
+  const dateBtn = document.getElementById("dateBtn");
 
   els.input.addEventListener("input", () => {
     els.addBtn.disabled = els.input.value.trim().length === 0;
   });
+
+  // Open the native date picker when the calendar button is tapped
+  if (dateBtn && dateInput) {
+    dateBtn.addEventListener("click", () => {
+      // showPicker() opens the date picker programmatically
+      if (typeof dateInput.showPicker === "function") {
+        dateInput.showPicker();
+      } else {
+        dateInput.click(); // fallback
+      }
+    });
+
+    // Update the button's visual state when a date is chosen
+    dateInput.addEventListener("change", () => {
+      if (dateInput.value) {
+        dateBtn.classList.add("has-date");
+        dateBtn.title = "Due: " + dateInput.value;
+      } else {
+        dateBtn.classList.remove("has-date");
+        dateBtn.title = "Set a due date";
+      }
+    });
+  }
 
   els.form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -510,6 +534,10 @@ function formatDate(d) {
     addTask(title, "", dueDate);
     els.input.value = "";
     if (dateInput) dateInput.value = "";
+    if (dateBtn) {
+      dateBtn.classList.remove("has-date");
+      dateBtn.title = "Set a due date";
+    }
     els.addBtn.disabled = true;
     els.input.focus();
   });

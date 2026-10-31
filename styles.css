@@ -790,55 +790,51 @@ body.dark .install-banner {
    DUE DATES
    ============================================================ */
 
-/* The date picker in the add form */
-.task-date-input {
-  padding: 0 10px;
-  font: inherit;
-  font-size: 0.82rem;
-  color: var(--text-muted);
+/* The date picker in the add form*/
+
+/* Hidden real date input — lives behind the calendar button */
+.task-date-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+/* Visible calendar button */
+.date-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--border);
   background: var(--input-bg);
-  border: 1.5px solid transparent;
+  color: var(--text-muted);
   border-radius: var(--radius);
   cursor: pointer;
-  transition: border-color var(--transition), background var(--transition);
-  width: 130px;
-  flex-shrink: 0;
-  position: relative;
+  transition: background var(--transition), color var(--transition),
+    border-color var(--transition);
 }
 
-.task-date-input:hover {
-  border-color: var(--border);
-}
-
-.task-date-input:focus {
-  outline: none;
-  background: var(--surface);
+.date-btn:hover {
+  background: var(--brand-soft);
+  color: var(--brand);
   border-color: var(--brand);
-  box-shadow: 0 0 0 3px var(--brand-soft);
 }
 
-/* Add a calendar icon inside the input */
-.task-date-input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.6;
-  width: 16px;
-  height: 16px;
+.date-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
-/* On mobile, hide the mm/dd/yyyy text so it looks like a button */
-@media (max-width: 600px) {
-  .task-date-input {
-    width: 44px;
-    color: transparent; /* Hides the text */
-    padding: 0;
-  }
-  .task-date-input::-webkit-datetime-edit {
-    display: none; /* Hides the fake placeholder text on mobile */
-  }
-  .task-date-input::-webkit-calendar-picker-indicator {
-    width: 20px;
-    height: 20px;
-    opacity: 0.7;
-    margin: 0 auto; /* Centers the icon */
-  }
+/* When a date is selected, highlight the button */
+.date-btn.has-date {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.date-btn.has-date:hover {
+  background: var(--brand-dark);
 }

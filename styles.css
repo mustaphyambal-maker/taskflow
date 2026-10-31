@@ -803,6 +803,7 @@ body.dark .install-banner {
   transition: border-color var(--transition), background var(--transition);
   width: 130px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .task-date-input:hover {
@@ -816,58 +817,28 @@ body.dark .install-banner {
   box-shadow: 0 0 0 3px var(--brand-soft);
 }
 
-/* Hide the date picker on very narrow screens */
-@media (max-width: 420px) {
+/* Add a calendar icon inside the input */
+.task-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  width: 16px;
+  height: 16px;
+}
+
+/* On mobile, hide the mm/dd/yyyy text so it looks like a button */
+@media (max-width: 600px) {
   .task-date-input {
     width: 44px;
+    color: transparent; /* Hides the text */
     padding: 0;
-    /* On tiny screens, only the calendar icon matters */
   }
-}
-
-/* The due date shown on a task row */
-.task-due {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
-.task-due svg {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-}
-
-/* Overdue — turn red */
-.task-due.is-overdue {
-  color: var(--danger);
-  font-weight: 600;
-}
-
-/* Today — highlight in brand color */
-.task-due.is-today {
-  color: var(--brand);
-  font-weight: 600;
-}
-
-/* The date picker in edit mode */
-.task-edit-date {
-  margin-top: 6px;
-  padding: 4px 8px;
-  font: inherit;
-  font-size: 0.8rem;
-  color: var(--text);
-  background: var(--input-bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  width: 160px;
-}
-
-.task-edit-date:focus {
-  border-color: var(--brand);
+  .task-date-input::-webkit-datetime-edit {
+    display: none; /* Hides the fake placeholder text on mobile */
+  }
+  .task-date-input::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+    margin: 0 auto; /* Centers the icon */
+  }
 }

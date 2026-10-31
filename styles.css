@@ -785,3 +785,89 @@ body.dark .install-banner {
 .credit a:hover {
   text-decoration: underline;
 }
+
+/* ============================================================
+   DUE DATES
+   ============================================================ */
+
+/* The date picker in the add form */
+.task-date-input {
+  padding: 0 10px;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: var(--input-bg);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.task-date-input:hover {
+  border-color: var(--border);
+}
+
+.task-date-input:focus {
+  outline: none;
+  background: var(--surface);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+/* Hide the date picker on very narrow screens */
+@media (max-width: 420px) {
+  .task-date-input {
+    width: 44px;
+    padding: 0;
+    /* On tiny screens, only the calendar icon matters */
+  }
+}
+
+/* The due date shown on a task row */
+.task-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.task-due svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Overdue — turn red */
+.task-due.is-overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Today — highlight in brand color */
+.task-due.is-today {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* The date picker in edit mode */
+.task-edit-date {
+  margin-top: 6px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  width: 160px;
+}
+
+.task-edit-date:focus {
+  border-color: var(--brand);
+}

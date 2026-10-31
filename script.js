@@ -75,12 +75,13 @@
       return parsed
         .filter((t) => t && typeof t === "object" && typeof t.title === "string")
         .map((t) => ({
-          id: String(t.id || uid()),
-          title: String(t.title).slice(0, 200),
-          note: String(t.note || "").slice(0, 500),
-          completed: Boolean(t.completed),
-          createdAt: Number(t.createdAt) || Date.now(),
-        }));
+  id: String(t.id || uid()),
+  title: String(t.title).slice(0, 200),
+  note: String(t.note || "").slice(0, 500),
+  dueDate: String(t.dueDate || ""),
+  completed: Boolean(t.completed),
+  createdAt: Number(t.createdAt) || Date.now(),
+}));
     } catch (err) {
       console.warn("TaskFlow: could not load tasks", err);
       return [];
@@ -153,92 +154,159 @@
 
   /** Build the inner HTML for one task row. */
   function renderTaskHTML(task) {
-    const isEditing = task.id === editingId;
+  const isEditing = task.id === editingId;
 
-    if (isEditing) {
-      return `
-        <li class="task-item is-editing" data-id="${task.id}">
-          <div class="task-body">
-            <input
-              type="text"
-              class="task-edit-input"
-              data-edit-title
-              value="${escapeHtml(task.title)}"
-              maxlength="200"
-              aria-label="Edit task title"
-            />
-            <input
-              type="text"
-              class="task-edit-note"
-              data-edit-note
-              value="${escapeHtml(task.note)}"
-              placeholder="Add a note (optional)"
-              maxlength="500"
-              aria-label="Edit task note"
-            />
-          </div>
-          <div class="task-actions" style="opacity:1;">
-            <button type="button" class="task-action-btn save-btn"
-                    data-action="save" aria-label="Save changes">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            </button>
-            <button type="button" class="task-action-btn cancel-btn"
-                    data-action="cancel" aria-label="Cancel editing">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </li>
-      `;
-    }
-
+  if (isEditing) {
     return `
-      <li class="task-item ${task.completed ? "is-completed" : ""}" data-id="${task.id}">
-        <label class="task-checkbox">
+      <li class="task-item is-editing" data-id="${task.id}">
+        <div class="task-body">
           <input
-            type="checkbox"
-            ${task.completed ? "checked" : ""}
-            aria-label="Mark '${escapeHtml(task.title)}' as ${task.completed ? "incomplete" : "complete"}"
-            data-action="toggle"
+            type="text"
+            class="task-edit-input"
+            data-edit-title
+            value="${escapeHtml(task.title)}"
+            maxlength="200"
+            aria-label="Edit task title"
           />
-          <span class="checkmark" aria-hidden="true">
+          <input
+            type="text"
+            class="task-edit-note"
+            data-edit-note
+            value="${escapeHtml(task.note)}"
+            placeholder="Add a note (optional)"
+            maxlength="500"
+            aria-label="Edit task note"
+          />
+          <input
+            type="date"
+            class="task-edit-date"
+            data-edit-date
+            value="${escapeHtml(task.dueDate || "")}"
+            aria-label="Edit due date"
+          />
+        </div>
+        <div class="task-actions" style="opacity:1;">
+          <button type="button" class="task-action-btn save-btn"
+                  data-action="save" aria-label="Save changes">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 6 9 17l-5-5" />
             </svg>
-          </span>
-        </label>
-
-        <div class="task-body">
-          <span class="task-title">${escapeHtml(task.title)}</span>
-          ${task.note ? `<span class="task-note">${escapeHtml(task.note)}</span>` : ""}
-        </div>
-
-        <div class="task-actions">
-          <button type="button" class="task-action-btn edit-btn"
-                  data-action="edit" aria-label="Edit '${escapeHtml(task.title)}'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-            </svg>
           </button>
-          <button type="button" class="task-action-btn delete-btn"
-                  data-action="delete" aria-label="Delete '${escapeHtml(task.title)}'">
+          <button type="button" class="task-action-btn cancel-btn"
+                  data-action="cancel" aria-label="Cancel editing">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+              <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
       </li>
     `;
   }
+
+  const dueHtml = task.dueDate ? renderDueDate(task.dueDate, task.completed) : "";
+
+  return `
+    <li class="task-item ${task.completed ? "is-completed" : ""}" data-id="${task.id}">
+      <label class="task-checkbox">
+        <input
+          type="checkbox"
+          ${task.completed ? "checked" : ""}
+          aria-label="Mark '${escapeHtml(task.title)}' as ${task.completed ? "incomplete" : "complete"}"
+          data-action="toggle"
+        />
+        <span class="checkmark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        </span>
+      </label>
+
+      <div class="task-body">
+        <span class="task-title">${escapeHtml(task.title)}</span>
+        ${task.note ? `<span class="task-note">${escapeHtml(task.note)}</span>` : ""}
+        ${dueHtml}
+      </div>
+
+      <div class="task-actions">
+        <button type="button" class="task-action-btn edit-btn"
+                data-action="edit" aria-label="Edit '${escapeHtml(task.title)}'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+          </svg>
+        </button>
+        <button type="button" class="task-action-btn delete-btn"
+                data-action="delete" aria-label="Delete '${escapeHtml(task.title)}'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          </svg>
+        </button>
+      </div>
+    </li>
+  `;
+}
+
+/** Render the due date badge with smart formatting. */
+function renderDueDate(dateStr, isCompleted) {
+  // dateStr is "YYYY-MM-DD". Parse as local date.
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return "";
+  const due = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+  if (isNaN(due.getTime())) return "";
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dueDay = new Date(due);
+  dueDay.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.round((dueDay - today) / (1000 * 60 * 60 * 24));
+
+  let label = "";
+  let cls = "";
+
+  if (isCompleted) {
+    // Completed tasks just show the date, no color
+    label = formatDate(due);
+  } else if (diffDays < 0) {
+    label = diffDays === -1 ? "Yesterday" : formatDate(due);
+    cls = "is-overdue";
+  } else if (diffDays === 0) {
+    label = "Today";
+    cls = "is-today";
+  } else if (diffDays === 1) {
+    label = "Tomorrow";
+  } else if (diffDays < 7) {
+    label = due.toLocaleDateString(undefined, { weekday: "long" });
+  } else {
+    label = formatDate(due);
+  }
+
+  return `
+    <span class="task-due ${cls}" title="Due ${formatDate(due)}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <path d="M16 2v4M8 2v4M3 10h18" />
+      </svg>
+      ${label}
+    </span>
+  `;
+}
+
+/** Format a Date as a short readable string. */
+function formatDate(d) {
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: d.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+  });
+}
 
   /** Update the items-left counter and footer visibility. */
   function renderFooter() {
@@ -305,21 +373,22 @@
      7. ACTIONS
      ---------------------------------------------------------- */
 
-  function addTask(title, note = "") {
-    const trimmed = title.trim();
-    if (!trimmed) return;
+  function addTask(title, note = "", dueDate = "") {
+  const trimmed = title.trim();
+  if (!trimmed) return;
 
-    tasks.push({
-      id: uid(),
-      title: trimmed,
-      note: note.trim(),
-      completed: false,
-      createdAt: Date.now(),
-    });
+  tasks.push({
+    id: uid(),
+    title: trimmed,
+    note: note.trim(),
+    dueDate: dueDate || "",
+    completed: false,
+    createdAt: Date.now(),
+  });
 
-    saveTasks();
-    render();
-  }
+  saveTasks();
+  render();
+}
 
   function toggleTask(id) {
     const task = tasks.find((t) => t.id === id);
@@ -359,31 +428,33 @@
   }
 
   function saveEdit(id) {
-    const li = els.taskList.querySelector(`.task-item[data-id="${id}"]`);
-    if (!li) return;
+  const li = els.taskList.querySelector(`.task-item[data-id="${id}"]`);
+  if (!li) return;
 
-    const titleInput = li.querySelector("[data-edit-title]");
-    const noteInput = li.querySelector("[data-edit-note]");
+  const titleInput = li.querySelector("[data-edit-title]");
+  const noteInput = li.querySelector("[data-edit-note]");
+  const dateInput = li.querySelector("[data-edit-date]");
 
-    const newTitle = (titleInput?.value || "").trim();
-    const newNote = (noteInput?.value || "").trim();
+  const newTitle = (titleInput?.value || "").trim();
+  const newNote = (noteInput?.value || "").trim();
+  const newDate = (dateInput?.value || "").trim();
 
-    if (!newTitle) {
-      // Empty title — just cancel the edit rather than creating an empty task
-      cancelEdit();
-      return;
-    }
-
-    const task = tasks.find((t) => t.id === id);
-    if (task) {
-      task.title = newTitle.slice(0, 200);
-      task.note = newNote.slice(0, 500);
-      saveTasks();
-    }
-
-    editingId = null;
-    render();
+  if (!newTitle) {
+    cancelEdit();
+    return;
   }
+
+  const task = tasks.find((t) => t.id === id);
+  if (task) {
+    task.title = newTitle.slice(0, 200);
+    task.note = newNote.slice(0, 500);
+    task.dueDate = newDate;
+    saveTasks();
+  }
+
+  editingId = null;
+  render();
+}
 
   function clearCompleted() {
     const completedIds = tasks.filter((t) => t.completed).map((t) => t.id);
@@ -425,22 +496,24 @@
      ---------------------------------------------------------- */
 
   function initForm() {
-    // Enable/disable the add button based on input
-    els.input.addEventListener("input", () => {
-      els.addBtn.disabled = els.input.value.trim().length === 0;
-    });
+  const dateInput = document.getElementById("taskDate");
 
-    // Submit handler (covers Enter + button click)
-    els.form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const title = els.input.value;
-      if (!title.trim()) return;
-      addTask(title);
-      els.input.value = "";
-      els.addBtn.disabled = true;
-      els.input.focus();
-    });
-  }
+  els.input.addEventListener("input", () => {
+    els.addBtn.disabled = els.input.value.trim().length === 0;
+  });
+
+  els.form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = els.input.value;
+    const dueDate = dateInput ? dateInput.value : "";
+    if (!title.trim()) return;
+    addTask(title, "", dueDate);
+    els.input.value = "";
+    if (dateInput) dateInput.value = "";
+    els.addBtn.disabled = true;
+    els.input.focus();
+  });
+}
 
   function initFilters() {
     els.filterTabs.forEach((tab) => {

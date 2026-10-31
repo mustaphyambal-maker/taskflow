@@ -71,31 +71,38 @@
          Text input + Add button. Enter submits.
          ============================================================ -->
     <form class="add-form" id="addForm" autocomplete="off">
-      <label for="taskInput" class="sr-only">Add a new task</label>
-      <input
-        type="text"
-        id="taskInput"
-        class="task-input"
-        name="task"
-        placeholder="What needs to be done?"
-        maxlength="200"
-        aria-label="New task title"
-      />
-      <button
-        type="submit"
-        id="addBtn"
-        class="add-btn"
-        aria-label="Add task"
-        disabled
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-             aria-hidden="true">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-        <span class="add-btn-text">Add</span>
-      </button>
-    </form>
+  <label for="taskInput" class="sr-only">Add a new task</label>
+  <input
+    type="text"
+    id="taskInput"
+    class="task-input"
+    name="task"
+    placeholder="What needs to be done?"
+    maxlength="200"
+    aria-label="New task title"
+  />
+  <input
+    type="date"
+    id="taskDate"
+    class="task-date-input"
+    aria-label="Due date (optional)"
+    title="Due date (optional)"
+  />
+  <button
+    type="submit"
+    id="addBtn"
+    class="add-btn"
+    aria-label="Add task"
+    disabled
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+    <span class="add-btn-text">Add</span>
+  </button>
+</form>
 
     <!-- ============================================================
          FILTER TABS

@@ -1,7 +1,6 @@
 <!-- ============================================================
      TASKFLOW — MINIMAL TASK MANAGER
      File: index.html
-     A fast, offline-first task manager.
      ============================================================ -->
 <!DOCTYPE html>
 <html lang="en">
@@ -39,25 +38,23 @@
       </button>
     </header>
 
+    <!-- ONBOARDING HINT -->
+    <div id="onboardingHint" class="onboarding-hint" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <span>Tap <strong>📅</strong> for a due date and <strong>🚩</strong> for priority. Everything saves offline!</span>
+    </div>
+
     <!-- ADD TASK FORM -->
-
-    <!-- Onboarding Hint (shows once) -->
-<div id="onboardingHint" class="onboarding-hint" hidden>
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 16v-4M12 8h.01" />
-  </svg>
-  <span>Tap <strong>📅</strong> for a due date and <strong>🚩</strong> for priority. Everything saves offline!</span>
-</div>
-
-
     <form class="add-form" id="addForm" autocomplete="off">
       <input type="text" id="taskInput" class="task-input" placeholder="What needs to be done?" maxlength="200" aria-label="New task title" />
       
       <!-- Hidden native date input -->
       <input type="date" id="taskDate" class="task-date-hidden" aria-label="Due date (optional)" />
       
-      <!-- Calendar button (opens the date picker) -->
+      <!-- Calendar button -->
       <button type="button" id="dateBtn" class="icon-action-btn" aria-label="Pick a due date" title="Set a due date">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -65,7 +62,7 @@
         </svg>
       </button>
 
-      <!-- Priority button (cycles low -> medium -> high) -->
+      <!-- Priority button -->
       <button type="button" id="priorityBtn" class="icon-action-btn" aria-label="Set priority" title="Priority: Low">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
@@ -119,7 +116,7 @@
 
   </main>
 
-  <!-- Install Prompt Banner (Hidden by default) -->
+  <!-- Install Prompt Banner -->
   <div id="installBanner" class="install-banner" hidden>
     <div class="install-content">
       <img src="icon-192.png" alt="TaskFlow Icon" class="install-icon">
@@ -139,7 +136,7 @@
     Built by <a href="https://mustaphyambal-maker.github.io/portfolio/" target="_blank">Mustapha Ambali</a>
   </footer>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- PWA Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

@@ -313,6 +313,11 @@
      ---------------------------------------------------------- */
   function addTask(title, note = "", dueDate = "", priority = "low") {
     const trimmed = title.trim();
+// Hide onboarding hint permanently
+    if (hint) {
+      hint.hidden = true;
+      try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
+   }
     if (!trimmed) return;
 
     tasks.push({
@@ -421,6 +426,29 @@
      8. EVENT WIRING
      ---------------------------------------------------------- */
   function initForm() {
+
+  // --- Onboarding Hint ---
+  const hint = document.getElementById("onboardingHint");
+  if (hint) {
+    const hintSeen = (() => {
+      try { return localStorage.getItem("taskflow.hintSeen") === "true"; }
+      catch (e) { return false; }
+    })();
+    
+    const hasTasks = tasks.length > 0;
+    
+    if (!hintSeen && !hasTasks) {
+      hint.hidden = false;
+      // Hide the hint as soon as they start typing
+      const hideHint = () => {
+        hint.hidden = true;
+        try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
+      };
+      if (els.input) els.input.addEventListener("input", hideHint, { once: true });
+    }
+  }
+
+  // ... (rest of the existing initForm code)
     const priorities = ["low", "medium", "high"];
     
     if (els.input) {

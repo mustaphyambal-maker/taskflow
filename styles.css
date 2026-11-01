@@ -594,3 +594,41 @@ body.dark .theme-toggle .icon-moon { display: none; }
   .task-item { padding: 14px; }
   .task-title { font-size: 1rem; }
 }
+
+/* ============================================================
+   ONBOARDING HINT
+   ============================================================ */
+.onboarding-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: var(--brand-soft);
+  border: 1px solid rgba(194, 65, 12, 0.2);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: var(--brand-dark);
+  line-height: 1.45;
+  animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.dark .onboarding-hint {
+  border-color: rgba(251, 146, 60, 0.2);
+  color: var(--brand);
+}
+
+.onboarding-hint[hidden] { display: none !important; }
+
+.onboarding-hint svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.onboarding-hint strong {
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+body.dark .onboarding-hint strong { color: var(--brand); }

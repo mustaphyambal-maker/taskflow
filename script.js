@@ -1,8 +1,6 @@
 /* ============================================================
    TASKFLOW — MINIMAL TASK MANAGER
    File: script.js
-   All logic: add, edit, delete, complete, filter, dates, priorities.
-   Vanilla JS only. No frameworks. No dependencies.
    ============================================================ */
 
 (function () {
@@ -15,9 +13,9 @@
   const THEME_KEY = "taskflow.theme.v1";
 
   let tasks = [];
-  let currentFilter = "all"; // "all" | "active" | "completed"
-  let editingId = null;      // id of the task currently being edited
-  let currentPriority = "low"; // "low" | "medium" | "high"
+  let currentFilter = "all";
+  let editingId = null;
+  let currentPriority = "low";
 
   /* ----------------------------------------------------------
      1. DOM REFERENCES
@@ -60,7 +58,6 @@
       .replace(/'/g, "&#39;");
   }
 
-  /** Format a Date as a short readable string (e.g. "Oct 30") */
   function formatDate(d) {
     return d.toLocaleDateString(undefined, {
       month: "short",
@@ -313,11 +310,6 @@
      ---------------------------------------------------------- */
   function addTask(title, note = "", dueDate = "", priority = "low") {
     const trimmed = title.trim();
-// Hide onboarding hint permanently
-    if (hint) {
-      hint.hidden = true;
-      try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
-   }
     if (!trimmed) return;
 
     tasks.push({
@@ -426,105 +418,105 @@
      8. EVENT WIRING
      ---------------------------------------------------------- */
   function initForm() {
-  const priorities = ["low", "medium", "high"];
-  const hint = document.getElementById("onboardingHint");
-  
-  // Show onboarding hint if it's the user's first time
-  if (hint) {
-    const hintSeen = (() => {
-      try { return localStorage.getItem("taskflow.hintSeen") === "true"; }
-      catch (e) { return false; }
-    })();
-    const hasTasks = tasks.length > 0;
+    const priorities = ["low", "medium", "high"];
+    const hint = document.getElementById("onboardingHint");
     
-    if (!hintSeen && !hasTasks) {
-      hint.hidden = false;
-      if (els.input) {
-        els.input.addEventListener("input", () => {
-          hint.hidden = true;
-          try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
-        }, { once: true });
+    // Show onboarding hint if it's the user's first time
+    if (hint) {
+      const hintSeen = (() => {
+        try { return localStorage.getItem("taskflow.hintSeen") === "true"; }
+        catch (e) { return false; }
+      })();
+      const hasTasks = tasks.length > 0;
+      
+      if (!hintSeen && !hasTasks) {
+        hint.hidden = false;
+        if (els.input) {
+          els.input.addEventListener("input", () => {
+            hint.hidden = true;
+            try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
+          }, { once: true });
+        }
       }
     }
-  }
 
-  if (els.input) {
-    els.input.addEventListener("input", () => {
-      if (els.addBtn) els.addBtn.disabled = els.input.value.trim().length === 0;
-    });
-  }
+    if (els.input) {
+      els.input.addEventListener("input", () => {
+        if (els.addBtn) els.addBtn.disabled = els.input.value.trim().length === 0;
+      });
+    }
 
-  // Date Button
-  if (els.dateBtn && els.dateInput) {
-    els.dateBtn.addEventListener("click", () => {
-      if (typeof els.dateInput.showPicker === "function") {
-        els.dateInput.showPicker();
-      } else {
-        els.dateInput.click();
-      }
-    });
+    // Date Button
+    if (els.dateBtn && els.dateInput) {
+      els.dateBtn.addEventListener("click", () => {
+        if (typeof els.dateInput.showPicker === "function") {
+          els.dateInput.showPicker();
+        } else {
+          els.dateInput.click();
+        }
+      });
 
-    els.dateInput.addEventListener("change", () => {
-      if (els.dateInput.value) {
-        els.dateBtn.classList.add("has-date");
-        els.dateBtn.title = "Due: " + els.dateInput.value;
-      } else {
-        els.dateBtn.classList.remove("has-date");
-        els.dateBtn.title = "Set a due date";
-      }
-    });
-  }
+      els.dateInput.addEventListener("change", () => {
+        if (els.dateInput.value) {
+          els.dateBtn.classList.add("has-date");
+          els.dateBtn.title = "Due: " + els.dateInput.value;
+        } else {
+          els.dateBtn.classList.remove("has-date");
+          els.dateBtn.title = "Set a due date";
+        }
+      });
+    }
 
-  // Priority Button
-  if (els.priorityBtn) {
-    els.priorityBtn.classList.add("priority-low");
-    
-    els.priorityBtn.addEventListener("click", () => {
-      const idx = priorities.indexOf(currentPriority);
-      currentPriority = priorities[(idx + 1) % priorities.length];
+    // Priority Button
+    if (els.priorityBtn) {
+      els.priorityBtn.classList.add("priority-low");
       
-      els.priorityBtn.classList.remove("priority-low", "priority-medium", "priority-high");
-      els.priorityBtn.classList.add("priority-" + currentPriority);
-      els.priorityBtn.title = "Priority: " + currentPriority;
-    });
+      els.priorityBtn.addEventListener("click", () => {
+        const idx = priorities.indexOf(currentPriority);
+        currentPriority = priorities[(idx + 1) % priorities.length];
+        
+        els.priorityBtn.classList.remove("priority-low", "priority-medium", "priority-high");
+        els.priorityBtn.classList.add("priority-" + currentPriority);
+        els.priorityBtn.title = "Priority: " + currentPriority;
+      });
+    }
+
+    // Form Submit
+    if (els.form) {
+      els.form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = els.input.value;
+        const dueDate = els.dateInput ? els.dateInput.value : "";
+        if (!title.trim()) return;
+
+        addTask(title, "", dueDate, currentPriority);
+
+        // Hide onboarding hint permanently
+        if (hint) {
+          hint.hidden = true;
+          try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
+        }
+
+        // Reset form
+        els.input.value = "";
+        if (els.dateInput) els.dateInput.value = "";
+        if (els.dateBtn) {
+          els.dateBtn.classList.remove("has-date");
+          els.dateBtn.title = "Set a due date";
+        }
+
+        currentPriority = "low";
+        if (els.priorityBtn) {
+          els.priorityBtn.classList.remove("priority-medium", "priority-high");
+          els.priorityBtn.classList.add("priority-low");
+          els.priorityBtn.title = "Priority: Low";
+        }
+
+        if (els.addBtn) els.addBtn.disabled = true;
+        els.input.focus();
+      });
+    }
   }
-
-  // Form Submit
-  if (els.form) {
-    els.form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const title = els.input.value;
-      const dueDate = els.dateInput ? els.dateInput.value : "";
-      if (!title.trim()) return;
-
-      addTask(title, "", dueDate, currentPriority);
-
-      // Hide onboarding hint permanently
-      if (hint) {
-        hint.hidden = true;
-        try { localStorage.setItem("taskflow.hintSeen", "true"); } catch (e) {}
-      }
-
-      // Reset form
-      els.input.value = "";
-      if (els.dateInput) els.dateInput.value = "";
-      if (els.dateBtn) {
-        els.dateBtn.classList.remove("has-date");
-        els.dateBtn.title = "Set a due date";
-      }
-
-      currentPriority = "low";
-      if (els.priorityBtn) {
-        els.priorityBtn.classList.remove("priority-medium", "priority-high");
-        els.priorityBtn.classList.add("priority-low");
-        els.priorityBtn.title = "Priority: Low";
-      }
-
-      if (els.addBtn) els.addBtn.disabled = true;
-      els.input.focus();
-    });
-  }
-}
 
   function initFilters() {
     els.filterTabs.forEach((tab) => {

@@ -634,26 +634,20 @@ body.dark .onboarding-hint {
 body.dark .onboarding-hint strong { color: var(--brand); }
 
 /* ============================================================
-   MOBILE SAFARI & SMALL SCREEN FIX (Form Wrapping)
+   SAFARI & SMALL SCREEN FIX (Force Wrapping)
    ============================================================ */
-@media (max-width: 400px) {
-  .add-form {
-    flex-wrap: wrap; /* Allows items to move to the next line */
-  }
+.add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
-  .task-input {
-    flex: 1 1 100%; /* The input takes up the whole first row */
-    width: 100%;
-    margin-bottom: 4px;
-  }
+.task-input {
+  flex: 1 1 180px; /* Forces the input to take at least 180px, wrapping the buttons */
+  min-width: 0;
+}
 
-  /* Make the buttons fill the second row evenly */
-  .icon-action-btn, .add-btn {
-    flex: 1; 
-    justify-content: center;
-  }
-  
-  .add-btn-text {
-    display: inline; /* Bring back the word "Add" so the button isn't tiny */
-  }
+/* Ensure the buttons stay inline on the second row */
+.icon-action-btn, .add-btn {
+  flex: 0 0 auto;
 }

@@ -632,3 +632,28 @@ body.dark .onboarding-hint {
   color: var(--brand-dark);
 }
 body.dark .onboarding-hint strong { color: var(--brand); }
+
+/* ============================================================
+   MOBILE SAFARI & SMALL SCREEN FIX (Form Wrapping)
+   ============================================================ */
+@media (max-width: 400px) {
+  .add-form {
+    flex-wrap: wrap; /* Allows items to move to the next line */
+  }
+
+  .task-input {
+    flex: 1 1 100%; /* The input takes up the whole first row */
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  /* Make the buttons fill the second row evenly */
+  .icon-action-btn, .add-btn {
+    flex: 1; 
+    justify-content: center;
+  }
+  
+  .add-btn-text {
+    display: inline; /* Bring back the word "Add" so the button isn't tiny */
+  }
+}
